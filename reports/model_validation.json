@@ -1,0 +1,71 @@
+{
+  "classes": [
+    "Insomnia",
+    "None",
+    "Sleep Apnea"
+  ],
+  "original_split": {
+    "test_rows": 75,
+    "accuracy": 0.88,
+    "test_rows_also_in_training": 66,
+    "confusion_matrix": [
+      [
+        15,
+        2,
+        3
+      ],
+      [
+        1,
+        40,
+        0
+      ],
+      [
+        2,
+        1,
+        11
+      ]
+    ]
+  },
+  "group_kfold": {
+    "folds": [
+      0.9467,
+      0.88,
+      0.92,
+      0.8533,
+      0.8649
+    ],
+    "mean_accuracy": 0.893
+  },
+  "unique_profiles_cv": {
+    "rows": 132,
+    "mean_accuracy": 0.6362
+  },
+  "majority_baseline": 0.5856,
+  "unique_profiles_baseline": 0.553,
+  "feature_importance": [
+    {
+      "feature": "BP Systolic",
+      "importance": 0.4758
+    },
+    {
+      "feature": "BMI Category",
+      "importance": 0.3913
+    },
+    {
+      "feature": "Daily Steps",
+      "importance": 0.1118
+    },
+    {
+      "feature": "Physical Activity Level",
+      "importance": 0.0182
+    },
+    {
+      "feature": "Age",
+      "importance": 0.0016
+    },
+    {
+      "feature": "Sleep Duration",
+      "importance": 0.0012
+    }
+  ]
+}

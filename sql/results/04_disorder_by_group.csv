@@ -1,0 +1,21 @@
+dimension,grp,people,none_pct,insomnia_pct,sleep_apnea_pct,any_disorder_pct
+Age group,55-59,35,14.3,0.0,85.7,85.7
+Age group,45-54,89,41.6,23.6,34.8,58.4
+Age group,35-44,168,64.3,30.4,5.4,35.7
+Age group,27-34,82,84.1,6.1,9.8,15.9
+BMI category,Obese,10,0.0,40.0,60.0,100.0
+BMI category,Overweight,148,12.8,43.2,43.9,87.2
+BMI category,Normal,216,92.6,4.2,3.2,7.4
+Gender,Female,185,44.3,19.5,36.2,55.7
+Gender,Male,189,72.5,21.7,5.8,27.5
+Occupation,Sales Representative,2,0.0,0.0,100.0,100.0
+Occupation,Salesperson,32,6.3,90.6,3.1,93.8
+Occupation,Nurse,73,12.3,4.1,83.6,87.7
+Occupation,Teacher,40,22.5,67.5,10.0,77.5
+Occupation,Scientist,4,50.0,0.0,50.0,50.0
+Occupation,Software Engineer,4,75.0,25.0,0.0,25.0
+Occupation,Accountant,37,81.1,18.9,0.0,18.9
+Occupation,Lawyer,47,89.4,4.3,6.4,10.6
+Occupation,Doctor,71,90.1,4.2,5.6,9.9
+Occupation,Engineer,63,90.5,7.9,1.6,9.5
+Occupation,Manager,1,100.0,0.0,0.0,0.0

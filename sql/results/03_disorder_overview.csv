@@ -1,0 +1,4 @@
+sleep_disorder,people,share_pct,avg_sleep_hours,avg_sleep_quality,avg_stress,avg_activity_minutes,avg_daily_steps,avg_heart_rate,avg_bp_systolic,avg_age
+None,219,58.6,7.36,7.63,5.11,57.9,6853.0,69.0,124.0,39.0
+Sleep Apnea,78,20.9,7.03,7.21,5.67,74.8,7619.0,73.1,137.8,49.7
+Insomnia,77,20.6,6.59,6.53,5.87,46.8,5901.0,70.5,132.0,43.5

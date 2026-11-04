@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sleep Disorder Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Filters and KPIs, then who has which disorder, how sleep and health differ, stress vs sleep, and the model. */
+:root {
+  --bg: #f5f5f3; --panel: #fff; --line: #e2e2dd; --ink: #17181a; --ink-2: #55585c; --ink-3: #7d8085;
+  --none: #a9adb3; --ins: #eb6834; --apnea: #2a78d6; --s1: #2a78d6;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font-body); }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 24px max(16px, env(safe-area-inset-right, 0px)) 44px max(16px, env(safe-area-inset-left, 0px)); display: grid; gap: 18px; }
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px; }
+.eyebrow { font: 600 12px/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+h1 { font: 800 clamp(24px, 4vw, 34px)/1.1 var(--font-display); margin: 6px 0 0; }
+.meta { color: var(--ink-2); font-size: 14px; max-width: 54ch; margin: 0; }
+a { color: var(--s1); }
+.filters { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; }
+.filters label { display: grid; gap: 3px; font-size: 13px; color: var(--ink-2); min-width: 150px; }
+select { font: 14px var(--font-body); border: 1px solid #c8c6c4; border-radius: 6px; padding: 6px 8px; background: #fff; color: var(--ink); }
+button { font: inherit; }
+.reset { border: 1px solid var(--line); background: #fff; border-radius: 6px; padding: 6px 12px; cursor: pointer; color: var(--ink-2); font-weight: 600; }
+.count { margin-left: auto; font-size: 13.5px; color: var(--ink-2); }
+button:focus-visible, select:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.kpi { background: var(--panel); padding: 14px 16px; display: grid; gap: 2px; }
+.kpi .l { font-size: 13px; color: var(--ink-2); }
+.kpi .v { font: 700 25px/1.15 var(--font-display); font-variant-numeric: tabular-nums; }
+.kpi .n { font-size: 12.5px; color: var(--ink-3); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; min-width: 0; display: grid; gap: 10px; align-content: start; }
+.panel h2 { font: 700 16px/1.3 var(--font-display); margin: 0; }
+.sub { font-size: 13px; color: var(--ink-2); margin: -6px 0 0; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 880px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.chart { position: relative; height: 300px; }
+.chart.tall { height: 380px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--ink-2); }
+.legend i { width: 11px; height: 11px; border-radius: 2px; display: inline-block; margin-right: 5px; vertical-align: -1px; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { border: 0; background: #fff; padding: 6px 12px; cursor: pointer; color: var(--ink-2); font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font: 600 12px/1.2 var(--font-body); text-transform: uppercase; letter-spacing: .05em; color: var(--ink-2); }
+td { font-family: var(--font-data); font-size: 13px; font-variant-numeric: tabular-nums; }
+th.l, td.l { text-align: left; font-family: var(--font-body); }
+td.l { font-size: 14px; }
+.cm td { text-align: center; }
+.cm td.h { background: #eef4fc; }
+.note { font-size: 13.5px; color: var(--ink-2); }
+.note p { margin: 0 0 6px; }
+.foot { font-size: 12.5px; color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Sleep health and lifestyle · 374 people · synthetic data</div>
+      <h1>Sleep Disorder Analysis</h1>
+    </div>
+    <p class="meta">Who has insomnia or sleep apnea, how their sleep and health differ, and how well a Decision Tree predicts it. <a href="https://github.com/codeind/Sleep-Disorder-Analysis-ML">Project on GitHub</a></p>
+  </header>
+
+  <section class="filters" aria-label="Filters">
+    <label>Gender <select id="f-gender"><option value="">All</option></select></label>
+    <label>BMI category <select id="f-bmi"><option value="">All</option></select></label>
+    <label>Occupation <select id="f-occ"><option value="">All</option></select></label>
+    <button type="button" class="reset" id="reset">Reset</button>
+    <span class="count" id="count" aria-live="polite"></span>
+  </section>
+
+  <section class="kpis" id="kpis" aria-label="Key figures"></section>
+
+  <section class="panel">
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center">
+      <h2>Sleep disorder by group</h2>
+      <div class="seg" role="group" aria-label="Group by" id="dims"></div>
+    </div>
+    <p class="sub">Share of people in each group with no disorder, insomnia or sleep apnea</p>
+    <div class="legend" aria-hidden="true"><span><i style="background:var(--none)"></i>None</span><span><i style="background:var(--ins)"></i>Insomnia</span><span><i style="background:var(--apnea)"></i>Sleep apnea</span></div>
+    <div class="chart tall"><canvas id="c-group" aria-label="Sleep disorder share by group"></canvas></div>
+  </section>
+
+  <div class="grid2">
+    <section class="panel">
+      <h2>Sleep and health by disorder</h2>
+      <p class="sub">Averages for each group</p>
+      <div class="tablewrap"><table id="t-compare"></table></div>
+    </section>
+    <section class="panel">
+      <h2>Stress and sleep</h2>
+      <p class="sub">Average hours of sleep at each stress level (1–10); hover for sleep quality and group size</p>
+      <div class="chart"><canvas id="c-stress" aria-label="Sleep by stress level"></canvas></div>
+    </section>
+  </div>
+
+  <div class="grid2">
+    <section class="panel">
+      <h2>Model accuracy, tested three ways</h2>
+      <p class="sub">Decision Tree predicting None / Insomnia / Sleep apnea (full dataset)</p>
+      <div class="chart"><canvas id="c-acc" aria-label="Model accuracy under different tests"></canvas></div>
+      <div class="note">
+        <p><b>Original split</b>: the notebook's random 80/20 split. 66 of its 75 test rows also appear in training, because 242 of 374 rows repeat another person's exact profile.</p>
+        <p><b>Leak-free</b>: identical profiles kept together, so the model is always tested on profiles it has not seen. The score holds at about 89%.</p>
+        <p><b>Unique profiles</b>: each distinct profile counted once. The common, repeated profiles are the easy ones.</p>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>What the model relies on</h2>
+      <p class="sub">Decision Tree feature importance</p>
+      <div class="chart" style="height:220px"><canvas id="c-imp" aria-label="Feature importance"></canvas></div>
+      <h2 style="margin-top:6px">Confusion matrix, original test set</h2>
+      <div class="tablewrap"><table class="cm" id="t-cm"></table></div>
+    </section>
+  </div>
+
+  <p class="foot">Data: Sleep Health and Lifestyle Dataset (Kaggle), a synthetic dataset. Patterns describe how the data was generated, not medical cause and effect. Built by <code>scripts/build.py</code>.</p>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="dashboard_data.js"></script>
+<script>
+(function () {
+  const S = window.SLEEP, C = S.columns, M = S.model;
+  const ix = n => C.indexOf(n);
+  const P = S.rows.map(r => Object.fromEntries(C.map((c, i) => [c, r[i]])));
+  const DIS = ["None", "Insomnia", "Sleep Apnea"], COL = { "None": "#a9adb3", "Insomnia": "#eb6834", "Sleep Apnea": "#2a78d6" };
+  const F = { gender: "", bmi: "", occ: "" };
+  const uniq = k => [...new Set(P.map(p => p[k]))].sort();
+  const sel = { gender: ["f-gender", "Gender"], bmi: ["f-bmi", "BMI Category"], occ: ["f-occ", "Occupation"] };
+  Object.entries(sel).forEach(([k, [id, col]]) => { const s = document.getElementById(id); uniq(col).forEach(v => s.add(new Option(v, v))); s.onchange = () => { F[k] = s.value; draw(); }; });
+  document.getElementById("reset").onclick = () => { Object.keys(F).forEach(k => { F[k] = ""; document.getElementById(sel[k][0]).value = ""; }); draw(); };
+  const rows = () => P.filter(p => (!F.gender || p.Gender === F.gender) && (!F.bmi || p["BMI Category"] === F.bmi) && (!F.occ || p.Occupation === F.occ));
+  const avg = (a, k) => a.length ? a.reduce((s, p) => s + p[k], 0) / a.length : NaN;
+  const pct = v => (v * 100).toFixed(1) + "%";
+  const ageGroup = a => a < 35 ? "27–34" : a < 45 ? "35–44" : a < 55 ? "45–54" : "55–59";
+  const DIMS = [["BMI Category", p => p["BMI Category"]], ["Occupation", p => p.Occupation], ["Gender", p => p.Gender], ["Age group", p => ageGroup(p.Age)]];
+  let dim = 0;
+  const dBox = document.getElementById("dims");
+  DIMS.forEach(([n], i) => { const b = document.createElement("button"); b.type = "button"; b.textContent = n; b.onclick = () => { dim = i; draw(); }; dBox.appendChild(b); });
+
+  Chart.defaults.font.family = '"Source Sans 3", "Segoe UI", system-ui, sans-serif';
+  Chart.defaults.color = "#55585c";
+  const charts = {};
+  const put = (id, cfg) => { if (charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg); };
+  const tip = { backgroundColor: "#17181a", padding: 8 };
+
+  function kpis(a) {
+    const n = a.length, share = d => n ? a.filter(p => p["Sleep Disorder"] === d).length / n : 0;
+    document.getElementById("count").textContent = `${n} of ${P.length} people`;
+    document.getElementById("kpis").innerHTML = [
+      ["People", n, "in the current filter"],
+      ["Insomnia", n ? pct(share("Insomnia")) : "–", a.filter(p => p["Sleep Disorder"] === "Insomnia").length + " people"],
+      ["Sleep apnea", n ? pct(share("Sleep Apnea")) : "–", a.filter(p => p["Sleep Disorder"] === "Sleep Apnea").length + " people"],
+      ["Average sleep", n ? avg(a, "Sleep Duration").toFixed(2) + " h" : "–", "per night"],
+      ["Sleep quality", n ? avg(a, "Quality of Sleep").toFixed(2) : "–", "average, out of 10"],
+      ["Model accuracy", pct(M.original_split.accuracy), pct(M.group_kfold.mean_accuracy) + " on unseen profiles"],
+    ].map(([l, v, s]) => `<div class="kpi"><span class="l">${l}</span><span class="v">${v}</span><span class="n">${s}</span></div>`).join("");
+  }
+
+  function groups(a) {
+    dBox.querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-pressed", i === dim));
+    const [name, fn] = DIMS[dim];
+    const g = new Map(); a.forEach(p => { const k = fn(p); if (!g.has(k)) g.set(k, []); g.get(k).push(p); });
+    const keys = [...g.keys()].sort((x, y) => {
+      const s = k => g.get(k).filter(p => p["Sleep Disorder"] !== "None").length / g.get(k).length;
+      return name === "Age group" ? x.localeCompare(y) : s(y) - s(x);
+    });
+    document.getElementById("c-group").parentElement.style.height = Math.max(200, keys.length * 42 + 60) + "px";
+    put("c-group", {
+      type: "bar",
+      data: { labels: keys.map(k => `${k} (${g.get(k).length})`), datasets: DIS.map(d => ({
+        label: d, data: keys.map(k => 100 * g.get(k).filter(p => p["Sleep Disorder"] === d).length / g.get(k).length),
+        backgroundColor: COL[d], borderColor: "#fff", borderWidth: 1, maxBarThickness: 26 })) },
+      options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, animation: false,
+        plugins: { legend: { display: false }, tooltip: Object.assign({}, tip, { callbacks: { label: x => `${x.dataset.label}: ${x.parsed.x.toFixed(1)}%` } }) },
+        scales: { x: { stacked: true, max: 100, grid: { color: "#ececec" }, border: { display: false }, ticks: { callback: v => v + "%" } }, y: { stacked: true, grid: { display: false } } } },
+    });
+  }
+
+  function compare(a) {
+    const metrics = [["Sleep Duration", "Sleep (hours)", 2], ["Quality of Sleep", "Sleep quality", 2], ["Stress Level", "Stress (1–10)", 2],
+      ["Physical Activity Level", "Activity (min/day)", 1], ["Daily Steps", "Daily steps", 0], ["Heart Rate", "Heart rate", 1], ["BP Systolic", "Systolic BP", 1], ["Age", "Age", 1]];
+    const by = DIS.map(d => a.filter(p => p["Sleep Disorder"] === d));
+    document.getElementById("t-compare").innerHTML = `<thead><tr><th class="l">Measure</th>${DIS.map((d, i) => `<th>${d}<br><span style="font-weight:400">${by[i].length} people</span></th>`).join("")}</tr></thead><tbody>` +
+      metrics.map(([k, l, dp]) => `<tr><td class="l">${l}</td>${by.map(b => `<td>${b.length ? avg(b, k).toLocaleString("en-US", { minimumFractionDigits: dp, maximumFractionDigits: dp }) : "–"}</td>`).join("")}</tr>`).join("") + "</tbody>";
+  }
+
+  function stress(a) {
+    const lv = [...new Set(a.map(p => p["Stress Level"]))].sort((x, y) => x - y);
+    const g = l => a.filter(p => p["Stress Level"] === l);
+    put("c-stress", {
+      type: "line",
+      data: { labels: lv.map(l => "Stress " + l), datasets: [
+        { label: "Sleep hours", data: lv.map(l => +avg(g(l), "Sleep Duration").toFixed(2)), borderColor: "#2a78d6", backgroundColor: "#2a78d6", borderWidth: 2, pointRadius: 4 }] },
+      options: { responsive: true, maintainAspectRatio: false, animation: false, interaction: { mode: "index", intersect: false },
+        plugins: { legend: { display: false }, tooltip: Object.assign({}, tip, { displayColors: false, callbacks: { label: x => `${x.parsed.y.toFixed(2)} hours of sleep`, afterLabel: x => [`Sleep quality ${avg(g(lv[x.dataIndex]), "Quality of Sleep").toFixed(2)} / 10`, `${g(lv[x.dataIndex]).length} people`] } }) },
+        scales: { x: { grid: { display: false } }, y: { min: 5, max: 9, title: { display: true, text: "Hours of sleep" }, grid: { color: "#ececec" }, border: { display: false } } } },
+    });
+  }
+
+  function model() {
+    const items = [["Original split (88%)", M.original_split.accuracy], ["Leak-free: unseen profiles", M.group_kfold.mean_accuracy],
+      ["Unique profiles only", M.unique_profiles_cv.mean_accuracy], ["Baseline (most common class)", M.unique_profiles_baseline]];
+    put("c-acc", {
+      type: "bar",
+      data: { labels: items.map(i => i[0]), datasets: [{ data: items.map(i => +(i[1] * 100).toFixed(1)), backgroundColor: ["#2a78d6", "#2a78d6", "#2a78d6", "#c8c6c4"], borderRadius: 3, maxBarThickness: 26 }] },
+      options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, animation: false,
+        plugins: { legend: { display: false }, tooltip: Object.assign({}, tip, { displayColors: false, callbacks: { label: x => x.parsed.x.toFixed(1) + "% accuracy" } }) },
+        scales: { x: { min: 0, max: 100, grid: { color: "#ececec" }, border: { display: false }, ticks: { callback: v => v + "%" } }, y: { grid: { display: false } } } },
+    });
+    const fi = M.feature_importance.filter(f => f.importance >= 0.005);
+    put("c-imp", {
+      type: "bar",
+      data: { labels: fi.map(f => f.feature), datasets: [{ data: fi.map(f => +(f.importance * 100).toFixed(1)), backgroundColor: "#2a78d6", borderRadius: 3, maxBarThickness: 22 }] },
+      options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, animation: false,
+        plugins: { legend: { display: false }, tooltip: Object.assign({}, tip, { displayColors: false, callbacks: { label: x => x.parsed.x.toFixed(1) + "% of importance" } }) },
+        scales: { x: { beginAtZero: true, grid: { color: "#ececec" }, border: { display: false }, ticks: { callback: v => v + "%" } }, y: { grid: { display: false } } } },
+    });
+    const cm = M.original_split.confusion_matrix, cl = M.classes;
+    document.getElementById("t-cm").innerHTML = `<thead><tr><th class="l">Actual \\ Predicted</th>${cl.map(c => `<th style="text-align:center">${c}</th>`).join("")}</tr></thead><tbody>` +
+      cm.map((r, i) => `<tr><td class="l">${cl[i]}</td>${r.map((v, j) => `<td class="${i === j ? "h" : ""}">${v}</td>`).join("")}</tr>`).join("") + "</tbody>";
+  }
+
+  function draw() { const a = rows(); kpis(a); groups(a); compare(a); stress(a); }
+  draw(); model();
+})();
+</script>
+</body>
+</html>

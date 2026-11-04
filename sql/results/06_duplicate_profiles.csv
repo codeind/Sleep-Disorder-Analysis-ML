@@ -1,0 +1,11 @@
+profile_key,copies,sleep_disorder,occupation,bmi_category
+Female|37|Accountant|7.2|8|60|4|Normal|115|75|68|7000|None,13,None,Accountant,Normal
+Male|44|Salesperson|6.3|6|45|7|Overweight|130|85|72|6000|Insomnia,11,Insomnia,Salesperson,Overweight
+Male|43|Salesperson|6.5|6|45|7|Overweight|130|85|72|6000|Insomnia,10,Insomnia,Salesperson,Overweight
+Male|39|Lawyer|7.2|8|60|5|Normal|130|85|68|8000|None,10,None,Lawyer,Normal
+Female|50|Nurse|6.0|6|90|8|Overweight|140|95|75|10000|Sleep Apnea,10,Sleep Apnea,Nurse,Overweight
+Male|43|Engineer|7.8|8|90|5|Normal|130|85|70|8000|None,8,None,Engineer,Normal
+Female|53|Engineer|8.5|9|30|3|Normal|125|80|65|5000|None,8,None,Engineer,Normal
+Female|38|Accountant|7.1|8|60|4|Normal|115|75|68|7000|None,8,None,Accountant,Normal
+Male|38|Lawyer|7.3|8|60|5|Normal|130|85|68|8000|None,7,None,Lawyer,Normal
+Male|32|Doctor|6.0|6|30|8|Normal|125|80|72|5000|None,7,None,Doctor,Normal

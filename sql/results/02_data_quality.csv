@@ -1,0 +1,6 @@
+item,value
+people,374
+unique profiles,132
+rows that repeat an earlier profile,242
+systolic below diastolic (should be 0),0
+duplicate person IDs (should be 0),0

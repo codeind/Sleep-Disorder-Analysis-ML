@@ -1,0 +1,20 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy scipy scikit-learn pytest
+      - name: Rebuild SQL results, model checks and dashboard data
+        run: python scripts/build.py
+      - name: Check the results still match the notebook
+        run: pytest -q
